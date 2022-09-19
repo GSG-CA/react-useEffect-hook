@@ -55,7 +55,7 @@ function Counter(props) {
 }
 ```
 
-lets trace the code above to figure out when `useEffect` runs, adding console inside `return`
+lets trace the code above to figure out when `useEffect` runs, adding console inside function body.
 
 ```jsx
 function Counter(props) {
@@ -67,9 +67,10 @@ function Counter(props) {
     console.log("use effect running");
   });
 
+  console.log("rendering phase");
+
   return (
     <>
-      {console.log("rendering phase")}
       <button onClick={() => setCount(count + 1)}>Count is {count}</button>
       <input value={name} onChange={(e) => setName(e.target.value)} />
     </>
@@ -106,9 +107,10 @@ function Counter(props) {
     console.log("use effect running ");
   }, [count]);
 
+  console.log("rendering phase");
+
   return (
     <>
-      {console.log("rendering phase")}
       <button onClick={() => setCount(count + 1)}>Count is {count}</button>
       <input value={name} onChange={(e) => setName(e.target.value)} />
     </>
@@ -133,7 +135,7 @@ As we can notice in the previous example we were running effect in every count u
 
 Now let's think together what if I want to add timers to count dynamically every 2s, without the need to have a button to set count value.
 
-Obviously we need to `setTimeOut` once in the first render.
+Obviously we need to `setInterval` once in the first render.
 
 ```jsx
 function Counter(props) {
@@ -141,15 +143,16 @@ function Counter(props) {
   const [name, setName] = React.useState("Lina");
 
   useEffect(() => {
-    setTimeOut(() => {
+    setInterval(() => {
       setCount((prevCount) => prevCount + 1);
     }, 2000);
     console.log("use effect running");
   }, []);
 
+  console.log("rendering phase");
+
   return (
     <>
-      {console.log("rendering phase")}
       <p>Count is: {count}</p>
       <input value={name} onChange={(e) => setName(e.target.value)} />
     </>
@@ -171,19 +174,20 @@ function Counter(props) {
   const [name, setName] = React.useState("Lina");
 
   useEffect(() => {
-    const timerID = setTimeOut(() => {
+    const timerID = setInterval(() => {
       setCount((prevCount) => prevCount + 1);
     }, 2000);
     console.log("use effect running");
     const cleanup = () => {
-      removeTimeOut(timerID);
+      clearInterval(timerID);
     };
     return cleanup;
   }, []);
 
+  console.log("rendering phase");
+
   return (
     <>
-      {console.log("rendering phase")}
       <p>Count is: {count}</p>
       <input value={name} onChange={(e) => setName(e.target.value)} />
     </>
